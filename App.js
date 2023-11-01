@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 export default function App() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
+  const [winner, setWinner] = useState(null);
 
-  const winner = calculateWinner(board);
+  useEffect(() => {
+    const calculatedWinner = calculateWinner(board);
+    if (calculatedWinner) {
+      setWinner(calculatedWinner);
+    }
+  }, [board]);
+
   const status = winner ? `Winner: ${winner}` : `Next Player: ${isXNext ? 'X' : 'O'}`;
 
   const renderSquare = (i) => (
-    <TouchableOpacity style={styles.square} onPress={() => handleSquareClick(i)}>
+    <TouchableOpacity style={styles.square} onPress={() => handleSquareClick(i)} disabled={board[i] || winner}>
       <Text style={styles.squareText}>{board[i]}</Text>
     </TouchableOpacity>
   );
@@ -22,6 +29,12 @@ export default function App() {
     newBoard[i] = isXNext ? 'X' : 'O';
     setBoard(newBoard);
     setIsXNext(!isXNext);
+  };
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setIsXNext(true);
+    setWinner(null);
   };
 
   return (
@@ -44,6 +57,9 @@ export default function App() {
           {renderSquare(8)}
         </View>
       </View>
+      <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
+        <Text style={styles.restartButtonText}>重新開始</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -73,6 +89,17 @@ const styles = StyleSheet.create({
   },
   squareText: {
     fontSize: 24,
+  },
+  restartButton: {
+    marginTop: 20,
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+  },
+  restartButtonText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 
