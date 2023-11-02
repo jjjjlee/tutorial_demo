@@ -121,6 +121,6 @@ function calculateWinner(squares) {
       return squares[a];
     }
   }
-
+  print("kk")
   return null;
 }
